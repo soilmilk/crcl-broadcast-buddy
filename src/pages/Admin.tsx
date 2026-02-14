@@ -33,6 +33,11 @@ export default function Admin() {
     updatePlayer(side, { deck: newDeck });
   };
 
+  const resetDeck = (side: "player1" | "player2") => {
+    const emptyDeck = Array(8).fill("No Card");
+    updatePlayer(side, { deck: emptyDeck });
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-5xl mx-auto">
@@ -56,7 +61,7 @@ export default function Admin() {
               <Input
                 value={data.matchTitle}
                 onChange={(e) => update({ matchTitle: e.target.value })}
-                className="bg-crcl-dark-3 border-border"
+                className="bg-white text-black placeholder:text-gray-400"
               />
             </div>
             <div>
@@ -65,7 +70,7 @@ export default function Admin() {
                 type="number"
                 value={data.matchNumber}
                 onChange={(e) => update({ matchNumber: parseInt(e.target.value) || 0 })}
-                className="bg-crcl-dark-3 border-border"
+                className="bg-white text-black placeholder:text-gray-400"
               />
             </div>
             <div>
@@ -74,7 +79,7 @@ export default function Admin() {
                 type="number"
                 value={data.day}
                 onChange={(e) => update({ day: parseInt(e.target.value) || 0 })}
-                className="bg-crcl-dark-3 border-border"
+                className="bg-white text-black placeholder:text-gray-400"
               />
             </div>
             <div>
@@ -131,7 +136,7 @@ export default function Admin() {
                       <Input
                         value={player.name}
                         onChange={(e) => updatePlayer(side, { name: e.target.value })}
-                        className="bg-crcl-dark-3 border-border"
+                        className="bg-white text-black placeholder:text-gray-400"
                       />
                     </div>
                     <div>
@@ -139,7 +144,7 @@ export default function Admin() {
                       <Input
                         value={player.school}
                         onChange={(e) => updatePlayer(side, { school: e.target.value })}
-                        className="bg-crcl-dark-3 border-border"
+                        className="bg-white text-black placeholder:text-gray-400"
                       />
                     </div>
                   </div>
@@ -176,7 +181,7 @@ export default function Admin() {
                         max={100}
                         value={player.winPercentage}
                         onChange={(e) => updatePlayer(side, { winPercentage: parseInt(e.target.value) || 0 })}
-                        className="bg-crcl-dark-3 border-border"
+                        className="bg-white text-black placeholder:text-gray-400"
                       />
                     </div>
                   </div>
@@ -186,7 +191,7 @@ export default function Admin() {
                       value={player.favoriteCard}
                       onValueChange={(v) => updatePlayer(side, { favoriteCard: v })}
                     >
-                      <SelectTrigger className="bg-crcl-dark-3 border-border">
+                      <SelectTrigger className="">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="max-h-60">
@@ -245,6 +250,20 @@ export default function Admin() {
               className="font-display uppercase border-crcl-gold text-crcl-gold"
             >
               Toggle Overtime
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => resetDeck("player1")}
+              className="font-display uppercase border-crcl-gold text-crcl-gold"
+            >
+              Reset Deck 1
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => resetDeck("player2")}
+              className="font-display uppercase border-crcl-gold text-crcl-gold"
+            >
+              Reset Deck 2
             </Button>
           </div>
         </div>

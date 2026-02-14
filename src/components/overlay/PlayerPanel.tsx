@@ -6,6 +6,29 @@ interface PlayerPanelProps {
   side: "left" | "right";
 }
 
+function normalizeCardName(name: string) {
+  // Handle "No Card" special case
+  if (name === "No Card") {
+    return "no-card";
+  }
+
+  // Handle other special cases
+  const specialCases: Record<string, string> = {
+    "Mini P.E.K.K.A": "mini-pekka",
+    "P.E.K.K.A": "pekka",
+    "The Log": "the-log",
+  };
+
+  if (specialCases[name]) {
+    return specialCases[name];
+  }
+
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[']/g, "");
+}
+
 export default function PlayerPanel({ player, side }: PlayerPanelProps) {
   const isLeft = side === "left";
   const panelClass = isLeft ? "panel-red" : "panel-blue";
@@ -44,8 +67,16 @@ export default function PlayerPanel({ player, side }: PlayerPanelProps) {
           FAVORITE CARD
         </span>
         <div className="flex items-center gap-3">
-          <div className="w-16 h-20 bg-crcl-dark-3 rounded border-2 border-crcl-gold/30 flex items-center justify-center">
-            <span className="text-2xl">👑</span>
+          <div className="w-16 h-20  border-crcl-gold/30 flex items-center justify-center overflow-hidden relative">
+            <img
+              key={player.favoriteCard}
+              src={`/images/${normalizeCardName(player.favoriteCard)}.png`}
+              alt={player.favoriteCard}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = "/images/no-card.png";
+              }}
+            />
           </div>
           <span className="font-display text-lg font-bold uppercase text-foreground">
             {player.favoriteCard}
@@ -66,14 +97,16 @@ export default function PlayerPanel({ player, side }: PlayerPanelProps) {
                 initial={{ opacity: 0, x: isLeft ? -20 : 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.05, duration: 0.3 }}
-                className="bg-crcl-dark-3 border border-foreground/10 rounded-sm p-1.5 text-center"
+                className="bg-crcl-dark-3 rounded-sm text-center overflow-hidden"
               >
-                <div className="w-full aspect-square bg-crcl-dark-1 rounded-sm flex items-center justify-center mb-1">
-                  <span className="text-lg">⚔️</span>
-                </div>
-                <span className="font-display text-[8px] uppercase leading-tight text-foreground/70 block truncate">
-                  {card}
-                </span>
+                <img
+                  src={`/images/${normalizeCardName(card)}.png`}
+                  alt={card}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = "/images/no-card.png";
+                  }}
+                />
               </motion.div>
             ))}
           </AnimatePresence>

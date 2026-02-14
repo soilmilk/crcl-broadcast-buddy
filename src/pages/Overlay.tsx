@@ -25,18 +25,23 @@ export default function Overlay() {
       />
 
       {/* Left Panel - Red Side */}
-      <div className="absolute left-0 top-0 h-full">
-        <PlayerPanel player={data.player1} side="left" />
-      </div>
+      <div className="absolute left-0 top-0 h-full w-[400px] z-20">
+  <PlayerPanel player={data.player1} side="left" />
+</div>
 
       {/* Right Panel - Blue Side */}
-      <div className="absolute right-[80px] top-0 h-full">
-        <PlayerPanel player={data.player2} side="right" />
-      </div>
+      {/* Right Panel */}
+<div className="absolute right-[80px] top-0 h-full w-[400px] z-20">
+  <PlayerPanel player={data.player2} side="right" />
+</div>
 
       {/* Crown Tracker - Far Right */}
-      <div className="absolute right-0 top-0 h-full w-[80px] esports-panel border-l-2 border-crcl-gold/30 flex flex-col items-center justify-center gap-3 py-4">
-        <span className="font-display text-xs uppercase tracking-widest text-crcl-gold font-bold writing-vertical rotate-180"
+      <div className="
+  absolute right-0 top-0 h-full w-[80px] z-10
+  bg-gradient-to-b from-crcl-dark-2 to-crcl-dark-3
+  border-l-2 border-crcl-gold/40
+  flex flex-col items-center justify-center gap-3 py-4
+">     <span className="font-display text-xs uppercase tracking-widest text-crcl-gold font-bold writing-vertical rotate-180"
           style={{ writingMode: "vertical-lr" }}>
           MATCH {data.matchNumber}
         </span>
