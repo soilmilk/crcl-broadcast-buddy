@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useMemo, useState } from "react";
 import { useMatchData } from "@/hooks/useMatchData";
 import { MatchData, CR_CARDS } from "@/lib/matchTypes";
 import { Input } from "@/components/ui/input";
@@ -6,6 +7,58 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+function CardSelect({
+  value,
+  onValueChange,
+  triggerClassName,
+}: {
+  value: string;
+  onValueChange: (value: string) => void;
+  triggerClassName?: string;
+}) {
+  const [query, setQuery] = useState("");
+  const normalizedQuery = query.trim().toLowerCase();
+  const filteredCards = useMemo(() => {
+    if (!normalizedQuery) return CR_CARDS;
+    return CR_CARDS.filter((card) => card.toLowerCase().includes(normalizedQuery));
+  }, [normalizedQuery]);
+
+  return (
+    <Select
+      value={value}
+      onValueChange={onValueChange}
+      onOpenChange={(open) => {
+        if (!open) setQuery("");
+      }}
+    >
+      <SelectTrigger className={triggerClassName}>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent className="max-h-80">
+        <div className="p-2">
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search cards..."
+            className="h-8 bg-white text-black placeholder:text-gray-400"
+            onKeyDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+          />
+        </div>
+        {filteredCards.length === 0 ? (
+          <div className="px-3 py-2 text-xs text-muted-foreground">No results</div>
+        ) : (
+          filteredCards.map((card) => (
+            <SelectItem key={card} value={card}>
+              {card}
+            </SelectItem>
+          ))
+        )}
+      </SelectContent>
+    </Select>
+  );
+}
 
 export default function Admin() {
   const { matchId } = useParams<{ matchId: string }>();
@@ -187,38 +240,21 @@ export default function Admin() {
                   </div>
                   <div>
                     <Label className="font-display text-xs uppercase tracking-wider">Favorite Card</Label>
-                    <Select
+                    <CardSelect
                       value={player.favoriteCard}
                       onValueChange={(v) => updatePlayer(side, { favoriteCard: v })}
-                    >
-                      <SelectTrigger className="">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-60">
-                        {CR_CARDS.map((card) => (
-                          <SelectItem key={card} value={card}>{card}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    />
                   </div>
                   <div>
                     <Label className="font-display text-xs uppercase tracking-wider mb-2 block">Deck (8 Cards)</Label>
                     <div className="grid grid-cols-4 gap-2">
                       {player.deck.map((card, i) => (
-                        <Select
+                        <CardSelect
                           key={i}
                           value={card}
                           onValueChange={(v) => updateDeckCard(side, i, v)}
-                        >
-                          <SelectTrigger className="bg-crcl-dark-3 border-border text-xs h-8">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="max-h-60">
-                            {CR_CARDS.map((c) => (
-                              <SelectItem key={c} value={c}>{c}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          triggerClassName="bg-crcl-dark-3 border-border text-xs h-8"
+                        />
                       ))}
                     </div>
                   </div>
