@@ -33,7 +33,7 @@ const Index = () => {
           </div>
           <div className="flex gap-3 justify-center">
             <Link to={`/overlay/${matchId}`}>
-              <Button className="font-display uppercase tracking-wider bg-crcl-red hover:bg-crcl-red-dark">
+              <Button className="font-display uppercase tracking-wider bg-crcl-red hover:bg-crcl-red-dark text-white border border-crcl-gold">
                 Open Overlay
               </Button>
             </Link>
