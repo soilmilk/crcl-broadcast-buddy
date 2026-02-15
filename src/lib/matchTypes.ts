@@ -67,4 +67,12 @@ export const CR_CARDS = [
   "Skeleton Dragons", "Skeleton King", "Skeletons", "Sparky", "Spear Goblins",
   "Tesla", "Three Musketeers", "Tornado", "Valkyrie", "Wall Breakers",
   "Witch", "Wizard", "X-Bow", "Zap", "Zappies",
+  "Baby Dragon (Evo)", "Bomber (Evo)", "Cannon (Evo)", "Dart Goblin (Evo)",
+  "Executioner (Evo)", "Furnace (Evo)", "Goblin Barrel (Evo)", "Goblin Cage (Evo)",
+  "Goblin Drill (Evo)", "Goblin Giant (Evo)", "Ice Spirit (Evo)",
+  "Inferno Dragon (Evo)", "Lumberjack (Evo)", "Mega Knight (Evo)",
+  "Musketeer (Evo)", "P.E.K.K.A (Evo)", "Royal Ghost (Evo)", "Royal Hogs (Evo)",
+  "Skeleton Army (Evo)", "Skeleton Barrel (Evo)", "Giant Snowball (Evo)",
+  "Tesla (Evo)", "Valkyrie (Evo)", "Wall Breakers (Evo)", "Witch (Evo)",
+  "Wizard (Evo)", "Zap (Evo)",
 ];
