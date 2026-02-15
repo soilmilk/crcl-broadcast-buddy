@@ -57,7 +57,7 @@ const PLAYERS_BY_SCHOOL = {
   "UT": [
     "ále❤️naomi",
     "✨Justina Xie✨",
-    "biller hater",
+    "ssophiee",
     "Doom Blade",
     "Buff Miner",
     "Bwu"
