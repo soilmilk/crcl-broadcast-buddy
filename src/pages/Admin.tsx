@@ -8,6 +8,86 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+// Player data organized by school
+const PLAYERS_BY_SCHOOL = {
+  "Stanford": [
+    "ForçaChape❤You",
+    "Davidodo",
+    "ʀʏᴏ",
+    "Master Oogway"
+  ],
+  "UIUC": [
+    "ɳͥøͣọͫᶀęɏ",
+    "Ian",
+    "RaginAsian",
+    "ChubbyMuffin",
+    "Hassan75",
+    "Bob"
+  ],
+  "NC State": [
+    "Ayqi",
+    "Rumz",
+    "OHMS",
+    "Ares1578",
+    "Birdie"
+  ],
+  "Dakota State": [
+    "King of Thieves",
+    "Special Ace",
+    "Sause",
+    "RED RIPPER",
+    "Crew",
+    "hittu"
+  ],
+  "UF": [
+    "Zenix✨惹糠",
+    "Azir",
+    "picpenguin",
+    "WaffleBoi",
+    "#Megaboss- $"
+  ],
+  "ASU": [
+    "Daniel",
+    "⚡️ Kaio-Ken ❄️",
+    "Durian",
+    "♣️ WILL",
+    "Flying Balloon",
+    "Gray"
+  ],
+  "UT": [
+    "ále❤️naomi",
+    "✨Justina Xie✨",
+    "biller hater",
+    "Doom Blade",
+    "Buff Miner",
+    "Bwu"
+  ],
+  "UofR": [
+    "PANcakes",
+    "Phoenix",
+    "Acid",
+    "2Crazyperson",
+    "James",
+    "vanillaLand"
+  ]
+};
+
+// Create flat list of players with school info
+const ALL_PLAYERS = Object.entries(PLAYERS_BY_SCHOOL).flatMap(([school, players]) =>
+  players.map(player => ({ name: player, school }))
+);
+
+// Helper to find player by name
+function findPlayer(playerName: string) {
+  return ALL_PLAYERS.find(p => p.name === playerName);
+}
+
+// Helper to get display value for current selection
+function getPlayerDisplayValue(playerName: string, playerSchool: string) {
+  if (!playerName || !playerSchool) return "";
+  return `${playerName} (${playerSchool})`;
+}
+
 function CardSelect({
   value,
   onValueChange,
@@ -60,6 +140,88 @@ function CardSelect({
   );
 }
 
+function PlayerSelect({
+  playerName,
+  playerSchool,
+  onPlayerChange,
+}: {
+  playerName: string;
+  playerSchool: string;
+  onPlayerChange: (name: string, school: string) => void;
+}) {
+  const [query, setQuery] = useState("");
+  const normalizedQuery = query.trim().toLowerCase();
+  
+  const filteredPlayers = useMemo(() => {
+    if (!normalizedQuery) return ALL_PLAYERS;
+    return ALL_PLAYERS.filter(
+      (player) =>
+        player.name.toLowerCase().includes(normalizedQuery) ||
+        player.school.toLowerCase().includes(normalizedQuery)
+    );
+  }, [normalizedQuery]);
+
+  // Create a unique value for the current selection
+  const currentValue = playerName && playerSchool 
+    ? `${playerName}::${playerSchool}` 
+    : "";
+
+  const handleValueChange = (value: string) => {
+    const [name, school] = value.split("::");
+    onPlayerChange(name, school);
+  };
+
+  return (
+    <Select
+      value={currentValue}
+      onValueChange={handleValueChange}
+      onOpenChange={(open) => {
+        if (!open) setQuery("");
+      }}
+    >
+      <SelectTrigger className="bg-white text-black">
+        <SelectValue placeholder="Select a player..." />
+      </SelectTrigger>
+      <SelectContent className="max-h-80">
+        <div className="p-2">
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search players or schools..."
+            className="h-8 bg-white text-black placeholder:text-gray-400"
+            onKeyDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+          />
+        </div>
+        {filteredPlayers.length === 0 ? (
+          <div className="px-3 py-2 text-xs text-muted-foreground">No results</div>
+        ) : (
+          Object.entries(PLAYERS_BY_SCHOOL).map(([school, players]) => (
+            <div key={school}>
+              <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase sticky top-0 bg-popover">
+                {school}
+              </div>
+              {players
+                .filter(player => {
+                  const playerData = findPlayer(player);
+                  return playerData && filteredPlayers.includes(playerData);
+                })
+                .map((player) => {
+                  const value = `${player}::${school}`;
+                  return (
+                    <SelectItem key={value} value={value} className="pl-6">
+                      {player}
+                    </SelectItem>
+                  );
+                })}
+            </div>
+          ))
+        )}
+      </SelectContent>
+    </Select>
+  );
+}
+
 export default function Admin() {
   const { matchId } = useParams<{ matchId: string }>();
   const { data, loading, updateMatch } = useMatchData(matchId || "default");
@@ -89,6 +251,10 @@ export default function Admin() {
   const resetDeck = (side: "player1" | "player2") => {
     const emptyDeck = Array(8).fill("No Card");
     updatePlayer(side, { deck: emptyDeck });
+  };
+
+  const handlePlayerSelect = (side: "player1" | "player2", name: string, school: string) => {
+    updatePlayer(side, { name, school });
   };
 
   return (
@@ -183,27 +349,17 @@ export default function Admin() {
                   </h2>
                 </div>
                 <div className="p-6 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="font-display text-xs uppercase tracking-wider">Name</Label>
-                      <Input
-                        value={player.name}
-                        onChange={(e) => updatePlayer(side, { name: e.target.value })}
-                        className="bg-white text-black placeholder:text-gray-400"
-                      />
-                    </div>
-                    <div>
-                      <Label className="font-display text-xs uppercase tracking-wider">School</Label>
-                      <Input
-                        value={player.school}
-                        onChange={(e) => updatePlayer(side, { school: e.target.value })}
-                        className="bg-white text-black placeholder:text-gray-400"
-                      />
-                    </div>
+                  <div>
+                    <Label className="font-display text-xs uppercase tracking-wider">Player</Label>
+                    <PlayerSelect
+                      playerName={player.name}
+                      playerSchool={player.school}
+                      onPlayerChange={(name, school) => handlePlayerSelect(side, name, school)}
+                    />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="font-display text-xs uppercase tracking-wider">Score</Label>
+                      <Label className="font-display text-xs uppercase tracking-wider">Player Score</Label>
                       <div className="flex items-center gap-2">
                         <Button
                           size="sm"
@@ -227,15 +383,28 @@ export default function Admin() {
                       </div>
                     </div>
                     <div>
-                      <Label className="font-display text-xs uppercase tracking-wider">Win %</Label>
-                      <Input
-                        type="number"
-                        min={0}
-                        max={100}
-                        value={player.winPercentage}
-                        onChange={(e) => updatePlayer(side, { winPercentage: parseInt(e.target.value) || 0 })}
-                        className="bg-white text-black placeholder:text-gray-400"
-                      />
+                      <Label className="font-display text-xs uppercase tracking-wider">School Score</Label>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => updatePlayer(side, { winPercentage: Math.max(0, player.winPercentage - 1) })}
+                          className="border-border"
+                        >
+                          −
+                        </Button>
+                        <span className="font-display text-2xl font-bold text-crcl-gold w-12 text-center">
+                          {player.winPercentage}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => updatePlayer(side, { winPercentage: Math.min(100, player.winPercentage + 1) })}
+                          className="border-border"
+                        >
+                          +
+                        </Button>
+                      </div>
                     </div>
                   </div>
                   <div>
